@@ -5,85 +5,32 @@ require_relative "high"
 require_relative "back"
 require_relative "analyzer"
 require_relative "phoneme"
+require_relative "DTW"
+require_relative "word"
+require_relative "alphabet"
+require_relative "IPA_Alphabet"
+require_relative "transcription"
 
+transcript_1 = "pliːs kal stela æsk ɚ"#" tu bʁiŋ d̪iːs siŋks wɪθ hɜ fʁɑm d̪ə stoə siks spuns ɑf fʁeʃ sno piːs faɪf sik slæb̥s ʌf blu ʧis"
+transcript_2 = "pʰl̥iiːz kʰɑlˠ stɛlə æskɚ"#" ɾə bɹɪ̃ŋ ðiiːz θɪ̃ŋz wɪθɚ fɹʌ̃m ðə stɔɹ sɪks spuunz əv fɹɛʃ snoʊ pʰiiːz faɪːv θɪk sl̥æːbz əv bluː ʧiiːz"
 
+# kick off a new alphabet
+alphabet = IPA_Alphabet.new()
+p_transcript_1 = Transcription.new(transcript_1, alphabet)
+p_transcript_2 = Transcription.new(transcript_2, alphabet)
+#t = Word.new()
+#puts t.process_word("ʧiə̆z̥").to_s
 
-test2 = Phoneme.new(:character => "o",
-                    :type => "vowel",
-                    :manner => "mvowel",
-                    :high => "closemid",
-                    :back => "back",
-                    :round => 1.0,
-                    :long => 0.0
-)
+#puts p_transcript_1[0].normalized_word
+puts p_transcript_1.size
+puts p_transcript_2.size
 
-test3 = Phoneme.new(:character => "ɔ",
-                    :type => "vowel",
-                    :manner => "mvowel",
-                    :high => "openmid",
-                    :back => "back",
-                    :round => 1.0,
-                    :long => 0.0
-)
+#puts alphabet["pʰ"]
 
-test1 = Phoneme.new(:character => "a",
-                    :type => "vowel",
-                    :manner => "mvowel",
-                    :high => "high",
-                    :back => "front",
-                    :round => 1.0,
-                    :long => 0.0
-)
+#m = Analyzer.new(alphabet)
+#m.alignment(p_transcript_1[0], p_transcript_2[0])
 
-puts test2.vowel_compare(test3)
+a = DTW.new(p_transcript_1, p_transcript_2, alphabet)
+output = a.analyze
 
-test4 = Phoneme.new(:character => "ð",
-                    :type => "consonant",
-                    :manner => "fricative",
-                    :place => "dental",
-                    :syllabic => 0.0,
-                    :nasal => 0.0,
-                    :retroflex => 0.0,
-                    :voice => 1.0,
-                    :lateral => 0.0,
-                    :aspirated => 0.0
-)
-
-
-test5 = Phoneme.new(:character => "w",
-                    :type => "consonant",
-                    :manner => "approximant",
-                    :place => "dental",
-                    :syllabic => 0.0,
-                    :nasal => 0.0,
-                    :retroflex => 0.0,
-                    :voice => 1.0,
-                    :lateral => 0.0,
-                    :aspirated => 0.0
-)
-
-test6 = Phoneme.new(:character => "t",
-                    :type => "consonant",
-                    :manner => "approximant",
-                    :place => "labiodental",
-                    :syllabic => 0.0,
-                    :nasal => 1.0,
-                    :retroflex => 0.0,
-                    :voice => 1.0,
-                    :lateral => 0.0,
-                    :aspirated => 0.0
-)
-
-puts test5.consonant_compare(test4)
-
-puts test5.mixed_compare(test3)
-
-try2 = [test6,test1, test6]
-try1 = [test5,test1, test3,test6]
-
-puts "%" * 50
-puts Phoneme.vowel(test1)
-
-temper = Analyzer.new()
-temper.alignment(try1, try2)
-
+puts output.to_s

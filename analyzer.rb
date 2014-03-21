@@ -1,6 +1,7 @@
 class Analyzer
-  def initialize()
+  def initialize(alphabet)
     # populate initial settings for weighting factors
+    @alphabet = alphabet
     @cskip = -10.0
     @csub = 35.0
     @cexp = 45.0
@@ -9,18 +10,18 @@ class Analyzer
 
   def exp(p, q1, q2)
     maxvowel = 0.0
-    if (Phoneme.vowel(q1) >= Phoneme.vowel(q2))
-        maxvowel = Phoneme.vowel(q1)
+    if (q1.vowel())
+        maxvowel = q1.vowel_cost()
     else
-        maxvowel = Phoneme.vowel(q2)
+        maxvowel = q2.vowel_cost()
     end
 
-    return @cexp - Phoneme.total_diff(p, q1) - Phoneme.total_diff(p, q2) - Phoneme.vowel(p) - maxvowel
+    return @cexp - Phoneme.total_diff(p, q1) - Phoneme.total_diff(p, q2) - p.vowel_cost() - maxvowel
   end
 
   def sub(p, q)
     # so this should take the csub constant subtract the totaldiff and then the constants for if it is two vowels...
-    return @csub - Phoneme.total_diff(p, q) - Phoneme.vowel(p) - Phoneme.vowel(q)
+    return @csub - Phoneme.total_diff(p, q) - p.vowel_cost() - q.vowel_cost()
   end
 
   def skip(p)
@@ -118,7 +119,7 @@ class Analyzer
     #Map psptrack = new HashMap();    // hash table
     #psptrack = new TreeMap();        // sorted map
 
-    puts matrix.to_s
+    #puts matrix.to_s
 
     i = 0
     while (i <= lengthx)
@@ -141,9 +142,9 @@ class Analyzer
         line += answerstack.pop() + "\n"
     end
 
-    puts line
-    puts "printing alignment: " + alignment.to_s
-    puts endscore
+    #puts line
+    #puts "printing alignment: " + alignment.to_s
+    #puts endscore
 
     return endscore
   end

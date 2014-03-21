@@ -1,12 +1,12 @@
 class Phoneme
-  @cskip = -10.0
-  @csub = 35.0
-  @cexp = 45.0
-  @cvowel = 10.0
-  @epsilon = 0.0
+
 
   def initialize(args)
-
+    @cskip = -10.0
+    @csub = 35.0
+    @cexp = 45.0
+    @cvowel = 10.0
+    @epsilon = 0.0
 
     @character = args[:character]
     @type = args[:type] # vowel, consonant, diacritic
@@ -26,13 +26,64 @@ class Phoneme
     @lateral = args[:lateral]
     @aspirated = args[:aspirated]
 
+    #
+    #
+
+    @features = {}
+    @features[:manner] = args[:manner]
+    @features[:place] = args[:place]
+
+    @features[:high] = args[:high]
+    @features[:back] = args[:back]
+    @features[:round] = args[:round]
+    @features[:long] = args[:long]
+
+    @features[:syllabic] = args[:syllabic]
+    @features[:nasal] = args[:nasal]
+    @features[:retroflex] = args[:retroflex]
+    @features[:voice] = args[:voice]
+    @features[:lateral] = args[:lateral]
+    @features[:aspirated] = args[:aspirated]
+
+
+  end
+
+  def character()
+    return @character
   end
 
   def vowel()
     return @type == "vowel"
   end
 
+  def vowel_cost()
+    return @cvowel
+  end
+
+  def alter_feature(name, value)
+    if !@features[name].nil?
+      if @features[name].class == String
+        @features[name] = value
+      else
+        @features[name] = @features[name] + value
+      end
+    else
+      @features[name] = value
+    end
+  end
+
+  def combine_features(phoneme_2)
+    for feature in phoneme_2.features
+      self.alter_feature(feature[0], feature[1])
+    end
+  end
+
+  #@vowel a single vowel object
+  #@pasofalkjf alksfja lskfja sf
   def self.vowel(vowel)
+    # Runs a subprocess and applies handlers for stdout and stderr
+    # Params:
+    # +vowel+:: command line string to be executed by the system
     if vowel.vowel()
       return @cvowel
     end
@@ -40,7 +91,11 @@ class Phoneme
   end
 
   def to_s
-    return "#{@character}"
+    @character
+  end
+
+  def set_character(full_character)
+    @character = full_character
   end
 
   def consonant()
@@ -98,6 +153,17 @@ class Phoneme
   def aspirated
     return @aspirated
   end
+
+  def features
+    features = []
+    for pair in @features.to_a
+      features << pair if !pair[1].nil?
+    end
+
+    return features
+  end
+
+
 
   def vowel_compare(compare_vowel)
     diff = 0.0
